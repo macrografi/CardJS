@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { CategoryScale, Chart, LinearScale, LineController, LineElement, PointElement, Title } from 'chart.js';
 import { TreemapController, TreemapElement } from 'chartjs-chart-treemap';
 import { fromEvent, Observable, Subscription } from 'rxjs';
@@ -20,7 +20,7 @@ Chart.register(
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css'],
 })
-export class AppComponent implements OnInit, AfterViewInit {
+export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   resizeObservable$: Observable<Event> | any;
   resizeSubscription$: Subscription | any;
   private myChart: any;
@@ -28,6 +28,11 @@ export class AppComponent implements OnInit, AfterViewInit {
   destroyButton = false;
 
   constructor(private formBuilder: FormBuilder) {}
+
+  ngOnDestroy(): void {
+    this.destroyButton = true;
+    this.myChart.destroy();
+  }
 
   ngAfterViewInit(): void {
     this.renderCard();
@@ -142,7 +147,6 @@ export class AppComponent implements OnInit, AfterViewInit {
         },
       });
     }, 300);
-
     this.calculateCanvas();
   }
 
